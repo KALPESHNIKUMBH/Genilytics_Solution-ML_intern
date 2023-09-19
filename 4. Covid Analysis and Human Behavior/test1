@@ -1,0 +1,169 @@
+###############################################
+israeli_data <- read.csv("C:/Users/admin/Desktop/Genilytics Solutions/Genilytics_Solution-ML_intern/4. Covid Analysis and Human Behavior/Instructions and Data/israeli.covid.19.ass2.2023.csv")
+str(israeli_data)
+# Calculate sample mean and sample standard deviation for both datasets
+mean_nsw <- mean(recovery_times$Recovery.Time)
+mean_nsw
+sd_nsw <- sd(recovery_times$Recovery.Time)
+sd_nsw
+
+mean_israeli <- mean(israeli_data$Recovery.Time)
+mean_israeli
+sd_israeli <- sd(israeli_data$Recovery.Time)
+sd_israeli
+
+# Calculate the sample sizes (n1 and n2)
+n1 <- length(recovery_times$Recovery.Time)
+n1
+n2 <- length(israeli_data$Recovery.Time)
+n2
+
+# Calculate the standard error of the difference in means
+standard_error_diff <- sqrt((sd_nsw^2 / n1) + (sd_israeli^2 / n2))
+standard_error_diff
+ 
+# Calculate t-score for a 95% confidence interval
+alpha <- 0.05  # 1 - confidence level
+t_score <- qt(1 - alpha / 2, df = n1 + n2 - 2)  # t-score for a two-tailed test
+t_score
+
+
+# Calculate margin of error
+margin_of_error_diff <- t_score * standard_error_diff
+margin_of_error_diff
+
+
+# Calculate the estimated mean difference
+mean_difference <- mean_nsw - mean_israeli
+mean_difference
+
+# Compute lower and upper bounds of the confidence interval
+lower_bound_diff <- mean_difference - margin_of_error_diff
+upper_bound_diff <- mean_difference + margin_of_error_diff
+
+# Summarize the results
+cat("Sample Mean (NSW):", mean_nsw, "\n")
+cat("Sample Standard Deviation (NSW):", sd_nsw, "\n")
+cat("Sample Mean (Israeli):", mean_israeli, "\n")
+cat("Sample Standard Deviation (Israeli):", sd_israeli, "\n")
+cat("Standard Error of Difference in Means:", standard_error_diff, "\n")
+cat("Margin of Error for Difference in Means:", margin_of error_diff, "\n")
+cat("Estimated Mean Difference in Recovery Times:", mean_difference, "\n")
+cat("95% Confidence Interval for Mean Difference: [", lower_bound_diff, ", ", upper_bound_diff, "]\n")
+########################
+######################################################################
+recovery_times <- read.csv("C:/Users/admin/Desktop/Genilytics Solutions/Genilytics_Solution-ML_intern/4. Covid Analysis and Human Behavior/Instructions and Data/covid.19.ass2.2023.csv")
+str(recovery_times)
+israeli_data <- read.csv("C:/Users/admin/Desktop/Genilytics Solutions/Genilytics_Solution-ML_intern/4. Covid Analysis and Human Behavior/Instructions and Data/israeli.covid.19.ass2.2023.csv")
+str(israeli_data)
+
+# Calculate sample means and standard deviations for both cohorts
+mean_nsw <- mean(recovery_times$Recovery.Time)
+sd_nsw <- sd(recovery_times$Recovery.Time)
+n_nsw <- length(recovery_times$Recovery.Time)
+
+mean_israeli <- mean(israeli_data$Recovery.Time)
+sd_israeli <- sd(israeli_data$Recovery.Time)
+n_israeli <- length(israeli_data$Recovery.Time)
+
+# Calculate the t-statistic
+t_statistic <- (mean_israeli - mean_nsw) / sqrt((sd_israeli^2 / n_israeli) + (sd_nsw^2 / n_nsw))
+
+# Calculate degrees of freedom
+df <- ((sd_israeli^2 / n_israeli + sd_nsw^2 / n_nsw)^2) / ((sd_israeli^2 / n_israeli^2) / (n_israeli - 1) + (sd_nsw^2 / n_nsw^2) / (n_nsw - 1))
+
+# Calculate the p-value
+p_value <- 2 * pt(abs(t_statistic), df = df)
+
+# Interpret the p-value
+alpha <- 0.05
+if (p_value < alpha) {
+  cat("Reject the null hypothesis: There is a significant difference in mean recovery time between Israeli and NSW cohorts.\n")
+} else {
+  cat("Fail to reject the null hypothesis: There is no significant difference in mean recovery time between Israeli and NSW cohorts.\n")
+}
+
+# Include the t-statistic and p-value in your report
+cat("t-statistic:", t_statistic, "\n")
+cat("Degrees of freedom:", df, "\n")
+cat("p-value:", p_value, "\n")
+
+#####################################################################33
+
+recovery_times <- read.csv("C:/Users/admin/Desktop/Genilytics Solutions/Genilytics_Solution-ML_intern/4. Covid Analysis and Human Behavior/Instructions and Data/covid.19.ass2.2023.csv")
+str(recovery_times)
+israeli_data <- read.csv("C:/Users/admin/Desktop/Genilytics Solutions/Genilytics_Solution-ML_intern/4. Covid Analysis and Human Behavior/Instructions and Data/israeli.covid.19.ass2.2023.csv")
+str(israeli_data)
+
+# Calculate sample means and standard deviations for both cohorts
+mean_nsw <- mean(recovery_times$Recovery.Time)
+sd_nsw <- sd(recovery_times$Recovery.Time)
+n_nsw <- length(recovery_times$Recovery.Time)
+
+mean_israeli <- mean(israeli_data$Recovery.Time)
+sd_israeli <- sd(israeli_data$Recovery.Time)
+n_israeli <- length(israeli_data$Recovery.Time)
+
+# Calculate the t-statistic
+t_statistic <- (mean_israeli - mean_nsw) / sqrt((sd_israeli^2 / n_israeli) + (sd_nsw^2 / n_nsw))
+
+# Calculate degrees of freedom
+df <- ((sd_israeli^2 / n_israeli + sd_nsw^2 / n_nsw)^2) / ((sd_israeli^2 / n_israeli^2) / (n_israeli - 1) + (sd_nsw^2 / n_nsw^2) / (n_nsw - 1))
+
+# Calculate the p-value
+p_value <- 2 * pt(abs(t_statistic), df = df)
+
+# Interpret the p-value
+alpha <- 0.05
+if (p_value < alpha) {
+  cat("Reject the null hypothesis: There is a significant difference in mean recovery time between Israeli and NSW cohorts.\n")
+} else {
+  cat("Fail to reject the null hypothesis: There is no significant difference in mean recovery time between Israeli and NSW cohorts.\n")
+}
+
+# Include the t-statistic and p-value in your report
+cat("t-statistic:", t_statistic, "\n")
+cat("Degrees of freedom:", df, "\n")
+cat("p-value:", p_value, "\n")
+
+#############################
+recovery_times <- read.csv("C:/Users/admin/Desktop/Genilytics Solutions/Genilytics_Solution-ML_intern/4. Covid Analysis and Human Behavior/Instructions and Data/covid.19.ass2.2023.csv")
+str(recovery_times)
+israeli_data <- read.csv("C:/Users/admin/Desktop/Genilytics Solutions/Genilytics_Solution-ML_intern/4. Covid Analysis and Human Behavior/Instructions and Data/israeli.covid.19.ass2.2023.csv")
+str(israeli_data)
+
+
+# Calculate sample means and standard deviations for both cohorts
+mean_nsw <- mean(recovery_times$Recovery.Time)
+sd_nsw <- sd(recovery_times$Recovery.Time)
+n_nsw <- length(recovery_times$Recovery.Time)
+
+mean_israeli <- mean(israeli_data$Recovery.Time)
+sd_israeli <- sd(israeli_data$Recovery.Time)
+n_israeli <- length(israeli_data$Recovery.Time)
+
+# Calculate the t-statistic
+t_statistic <- (mean_israeli - mean_nsw) / sqrt((sd_israeli^2 / n_israeli) + (sd_nsw^2 / n_nsw))
+t_statistic
+
+# Calculate degrees of freedom
+df <- ((sd_israeli^2 / n_israeli + sd_nsw^2 / n_nsw)^2) / ((sd_israeli^2 / n_israeli^2) / (n_israeli - 1) + (sd_nsw^2 / n_nsw^2) / (n_nsw - 1))
+df
+
+# Calculate the p-value
+p_value <- 2 * pt(abs(t_statistic), df = df)
+p_value
+
+# Interpret the p-value
+alpha <- 0.05
+if (p_value < alpha) {
+  cat("Reject the null hypothesis: There is a significant difference in mean recovery time between Israeli and NSW cohorts.\n")
+} else {
+  cat("Fail to reject the null hypothesis: There is no significant difference in mean recovery time between Israeli and NSW cohorts.\n")
+}
+
+# Include the t-statistic and p-value in your report
+cat("t-statistic:", t_statistic, "\n")
+cat("Degrees of freedom:", df, "\n")
+cat("p-value:", p_value, "\n")
+
