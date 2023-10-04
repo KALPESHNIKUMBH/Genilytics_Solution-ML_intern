@@ -1,0 +1,22 @@
+#Q3.2
+# Define the observed number of "successes" (heads to the right)
+observed_successes <- 80
+
+# Define the total number of trials (kissing pairs)
+total_trials <- 124
+
+# Perform the binomial test
+binom.test(observed_successes, total_trials, p = 0.5, alternative = "two.sided")
+
+#Q3.4
+# Given data
+n_right_handed <- 83  # Number of right-handed people
+n_left_handed <- 17   # Number of left-handed people
+n_right_head_turn <- 80  # Number of people who turn their heads to the right
+
+# Calculate sample proportions
+p_right_handed <- n_right_handed / (n_right_handed + n_left_handed)
+p_right_head_turn <- n_right_head_turn / (n_right_handed + n_left_handed)
+
+# Perform the hypothesis test
+prop.test(x = c(n_right_head_turn, n_right_handed), n = c(n_right_handed + n_left_handed, n_right_handed + n_left_handed), alternative = "two.sided")

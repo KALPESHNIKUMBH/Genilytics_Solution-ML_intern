@@ -1,0 +1,145 @@
+# Load necessary libraries
+library(readxl)
+library(glmnet)
+library(caret)
+library(pROC)
+
+# Specify the file path with double backslashes
+file_path <- "C:\\Users\\admin\\Desktop\\Genilytics Solutions\\Genilytics_Solution-ML_intern\\5. Credit default modeling\\Instructions and Data\\CreditCard_Data.xls"
+
+# Load the dataset using the correct file path
+data <- read_excel(file_path)
+
+# Check for missing values
+missing_values <- colSums(is.na(data))
+
+# Print columns with missing values
+print(missing_values[missing_values > 0])
+
+# Example: Remove rows with missing values
+data <- data[complete.cases(data), ]
+
+# Set the first row as column names and remove it
+colnames(data) <- data[1, ]
+data <- data[-1, ]
+
+# Ensure that AGE is numeric
+data$AGE <- as.numeric(data$AGE)
+
+# Calculate z-scores for AGE
+z_scores <- scale(data$AGE)
+
+# Remove rows with AGE values outside a certain range (e.g., within 3 standard deviations)
+data <- data[abs(z_scores) < 3, ]
+
+# Convert relevant columns to appropriate data types
+data$ID <- as.numeric(data$ID)
+data$LIMIT_BAL <- as.numeric(data$LIMIT_BAL)
+data$SEX <- as.numeric(data$SEX)
+data$EDUCATION <- as.numeric(data$EDUCATION)
+data$MARRIAGE <- as.numeric(data$MARRIAGE)
+data$PAY_0 <- as.numeric(data$PAY_0)
+data$PAY_2 <- as.numeric(data$PAY_2)
+data$PAY_3 <- as.numeric(data$PAY_3)
+data$PAY_4 <- as.numeric(data$PAY_4)
+data$PAY_5 <- as.numeric(data$PAY_5)
+data$PAY_6 <- as.numeric(data$PAY_6)
+data$BILL_AMT1 <- as.numeric(data$BILL_AMT1)
+data$BILL_AMT2 <- as.numeric(data$BILL_AMT2)
+data$BILL_AMT3 <- as.numeric(data$BILL_AMT3)
+data$BILL_AMT4 <- as.numeric(data$BILL_AMT4)
+data$BILL_AMT5 <- as.numeric(data$BILL_AMT5)
+data$BILL_AMT6 <- as.numeric(data$BILL_AMT6)
+data$PAY_AMT1 <- as.numeric(data$PAY_AMT1)
+data$PAY_AMT2 <- as.numeric(data$PAY_AMT2)
+data$PAY_AMT3 <- as.numeric(data$PAY_AMT3)
+data$PAY_AMT4 <- as.numeric(data$PAY_AMT4)
+data$PAY_AMT5 <- as.numeric(data$PAY_AMT5)
+data$PAY_AMT6 <- as.numeric(data$PAY_AMT6)
+
+# Convert the response variable to a binary factor variable (0 or 1)
+data$`default payment next month` <- as.factor(data$`default payment next month`)
+
+# Split the data into training (70%) and test (30%) sets
+set.seed(123)  # Set a random seed for reproducibility
+train_index <- sample(1:nrow(data), 0.7 * nrow(data))
+train_data <- data[train_index, ]
+test_data <- data[-train_index, ]
+
+str(data)
+
+# Hyperparameter Tuning with Grid Search
+# Define a hyperparameter grid
+hyperparameter_grid <- expand.grid(
+  alpha = 1,  # Lasso regression
+  lambda = seq(0.001, 1, by = 0.001)  # Range of lambda values to search
+)
+
+# Use cross-validation to tune the hyperparameters
+tuned_model <- train(
+  x = as.matrix(train_data[, -ncol(train_data)]),
+  y = as.numeric(train_data$`default payment next month`),
+  method = "glmnet",
+  trControl = trainControl(method = "cv", number = 5),  # 5-fold cross-validation
+  tuneGrid = hyperparameter_grid
+)
+
+# Get the best hyperparameters
+best_alpha <- tuned_model$bestTune$alpha
+best_lambda <- tuned_model$bestTune$lambda
+
+# Build the final model with the best hyperparameters
+final_model <- glmnet(
+  x = as.matrix(train_data[, -ncol(train_data)]),
+  y = as.numeric(train_data$`default payment next month`),
+  alpha = best_alpha,
+  lambda = best_lambda,
+  family = "binomial"
+)
+
+# Make predictions on the training data
+train_predictions <- predict(final_model, s = best_lambda, 
+                            newx = as.matrix(train_data[, -ncol(train_data)]), type = "response")
+
+# Convert probabilities to binary predictions (0 or 1)
+train_predictions <- ifelse(train_predictions > 0.5, 1, 0)
+
+# Calculate training accuracy
+train_accuracy <- mean(train_predictions == as.numeric(train_data$`default payment next month`))
+cat("Training Accuracy:", train_accuracy, "\n")
+
+# Make predictions on the test data
+test_predictions <- predict(final_model, s = best_lambda, 
+                            newx = as.matrix(test_data[, -ncol(test_data)]), type = "response")
+
+# Convert probabilities to binary predictions (0 or 1)
+test_predictions <- ifelse(test_predictions > 0.5, 1, 0)
+
+# Calculate testing accuracy
+test_accuracy <- mean(test_predictions == as.numeric(test_data$`default payment next month`))
+cat("Testing Accuracy:", test_accuracy, "\n")
+
+# Create a confusion matrix
+confusion_matrix <- confusionMatrix(factor(test_predictions), test_data$`default payment next month`)
+
+# Print Confusion Matrix
+print("Confusion Matrix:")
+print(confusion_matrix)
+
+# Calculate Precision, Recall, and F1-Score
+precision <- confusion_matrix$byClass["Pos Pred Value"]
+recall <- confusion_matrix$byClass["Sensitivity"]
+f1_score <- confusion_matrix$byClass["F1"]
+
+cat("Precision:", precision, "\n")
+cat("Recall (Sensitivity):", recall, "\n")
+cat("F1-Score:", f1_score, "\n")
+
+# Calculate ROC AUC
+roc_obj <- roc(test_data$`default payment next month`, as.numeric(test_predictions))
+roc_auc <- auc(roc_obj)
+cat("ROC AUC:", roc_auc, "\n")
+
+# Plot the ROC curve
+roc_curve <- roc(test_data$`default payment next month`, as.numeric(test_predictions))
+plot(roc_curve, main = "ROC Curve", auc.polygon = TRUE, print.auc = TRUE)

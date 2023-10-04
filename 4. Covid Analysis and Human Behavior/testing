@@ -1,0 +1,52 @@
+# Define the range of y values
+y_values <- seq(0, 10, length.out = 1000)  # You can adjust the number of points for a smoother plot
+y_values
+
+# Define the values of v for which you want to plot the PDF
+v_values <- c(1, 0.5, 2)
+v_values
+
+# Create an empty plot
+plot(NULL, xlim = c(0, 10), ylim = c(0, 1), 
+     xlab = "y", ylab = "Probability Density",
+     main = "Exponential PDF for Different Values of v")
+
+# Plot the PDF for each value of v
+for (v in v_values) {
+  pdf_values <- exp(-exp(-v * y_values) - v)
+  lines(y_values, pdf_values, type = "l", col = rainbow(length(v_values))[v])
+}
+
+# Add a legend
+legend("topright", legend = paste("v =", v_values), col = rainbow(length(v_values)), lty = 1)
+
+# Display the plot
+grid()
+
+#################
+# Define a function for the exponential PDF
+exponential_pdf <- function(y, v) {
+  exp(-exp(-v * y) - v)
+}
+
+# Values of y in the range (0, 10)
+y_values <- seq(0, 10, by = 0.1)
+
+# Values of v
+v_values <- c(1, 0.5, 2)
+
+# Create a blank plot
+plot(NULL, xlim = c(0, 10), ylim = c(0, 1), 
+     xlab = "y", ylab = "p(y | v)", 
+     main = "Exponential PDF for Different v Values")
+
+# Plot the exponential PDF for each v value
+for (v in v_values) {
+  pdf_values <- sapply(y_values, function(y) exponential_pdf(y, v))
+  lines(y_values, pdf_values, col = sample(colors(), 1))
+}
+
+# Add a legend
+legend("topright", legend = paste("v =", v_values), 
+       col = 1:length(v_values), lty = 1, cex = 0.8)
+

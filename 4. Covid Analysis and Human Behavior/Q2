@@ -1,0 +1,22 @@
+#########################################
+#Install and load ggplot2 if you haven't already
+install.packages("ggplot2")
+library(ggplot2)
+
+# Define the range of values (y) and values of v
+y <- seq(0, 10, by = 0.1)
+v_values <- c(1, 0.5, 2)
+
+# Create a data frame for plotting
+df <- data.frame(y = rep(y, times = length(v_values)), v = rep(v_values, each = length(y)))
+
+# Calculate the probability density function
+df$probability <- dexp(df$y, rate = 1 / df$v)
+
+# Create the plot
+ggplot(df, aes(x = y, y = probability, color = factor(v))) +
+  geom_line() +
+  labs(x = "y", y = "Probability Density", color = "v") +
+  scale_color_discrete(name = "v") +
+  ggtitle("Exponential Probability Density Function for Different v Values") +
+  theme_minimal()
