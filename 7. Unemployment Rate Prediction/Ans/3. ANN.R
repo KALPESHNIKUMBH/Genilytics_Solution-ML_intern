@@ -1,6 +1,6 @@
 # Load your dataset
 data <- read.csv("C:/Users/kalpe/Desktop/Genilytics_Solution-ML_intern/7. Unemployment Rate Prediction/Aus_data_2023.csv")
-str(data)
+#str(data)
 
 ##
 
@@ -19,12 +19,12 @@ data[[col]] <- ifelse(is.na(data[[col]]), mean_value, data[[col]])
 # Check if missing values are replaced
 missing_values_updated <- sapply(data, function(x) sum(is.na(x)))
 missing_values_updated
-data
+str(data)
 
 
 ############################################################################################
 
-NN
+#NN
 
 ############################################################################################
 
@@ -32,15 +32,12 @@ NN
 # Load the neuralnet library
 library(neuralnet)
 
-# Set a seed for reproducibility
-set.seed(123)
+# Filter data for training (December 1982 to December 2020)
+train_data <- data[data$Year_Q >= "1982_Dec" & data$Year_Q <= "2020_Dec", ]
 
-# Split the data into a training set and a test set
-set.seed(123)  # You can change the seed for randomness
-sample_size <- floor(0.7 * nrow(data))  # 70% for training, 30% for testing
-train_indices <- sample(1:nrow(data), sample_size)
-train_data <- data[train_indices, ]
-test_data <- data[-train_indices, ]
+# Filter data for testing (June 2020 to June 2023)
+test_data <- data[data$Year_Q >= "2020_Jun" & data$Year_Q <= "2023_Jun", ]
+
 
 # Define the neural network model
 nn_model <- neuralnet(Y ~ X1 + X2 + X3 + X4 + X5 + X6 + X7, 
@@ -81,15 +78,12 @@ cat("R-squared (R^2) for Neural Network on the test set:", rsq_test_nn, "\n")
 # Load the necessary libraries
 library(neuralnet)
 
-# Set a seed for reproducibility
-set.seed(123)
+# Filter data for training (December 1982 to December 2020)
+train_data <- data[data$Year_Q >= "1982_Dec" & data$Year_Q <= "2020_Dec", ]
 
-# Split the data into a training set and a test set
-set.seed(123)  # You can change the seed for randomness
-sample_size <- floor(0.7 * nrow(data))  # 70% for training, 30% for testing
-train_indices <- sample(1:nrow(data), sample_size)
-train_data <- data[train_indices, ]
-test_data <- data[-train_indices, ]
+# Filter data for testing (June 2020 to June 2023)
+test_data <- data[data$Year_Q >= "2020_Jun" & data$Year_Q <= "2023_Jun", ]
+
 
 # Create a function to build and train the neural network
 train_neural_network <- function(hidden_layers, neurons) {

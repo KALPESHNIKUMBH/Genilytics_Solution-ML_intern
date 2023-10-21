@@ -1,8 +1,7 @@
 # Load your dataset
 data <- read.csv("C:/Users/kalpe/Desktop/Genilytics_Solution-ML_intern/7. Unemployment Rate Prediction/Aus_data_2023.csv")
-str(data)
-#data
-##
+###data
+
 
 # Check for missing values in the dataset
 missing_values <- sapply(data, function(x) sum(is.na(x)))
@@ -19,7 +18,7 @@ data[[col]] <- ifelse(is.na(data[[col]]), mean_value, data[[col]])
 # Check if missing values are replaced
 missing_values_updated <- sapply(data, function(x) sum(is.na(x)))
 missing_values_updated
-data
+str(data)
 
 
 
@@ -38,14 +37,14 @@ data
 library(randomForest)
 library(caret)
 
-# Set a seed for reproducibility
-set.seed(123)
+# Filter data for training (December 1982 to December 2020)
+train_data <- data[data$Year_Q >= "1982_Dec" & data$Year_Q <= "2020_Dec", ]
 
-# Assuming you've already loaded and preprocessed your data as in the previous code
-# Perform a train-test split
-train_indices <- createDataPartition(data$Y, p = 0.8, list = FALSE)
-train_data <- data[train_indices, ]
-test_data <- data[-train_indices, ]
+# Filter data for testing (June 2020 to June 2023)
+test_data <- data[data$Year_Q >= "2020_Jun" & data$Year_Q <= "2023_Jun", ]
+###head(train_data)
+###tail(train_data)
+###test_data
 
 # Define your target variable for training and testing
 target_variable_train <- train_data$Y
@@ -95,14 +94,11 @@ cat("R-squared (R^2) on the test set:", rsq_test, "\n")
 library(randomForest)
 library(caret)
 
-# Set a seed for reproducibility
-set.seed(123)
+# Filter data for training (December 1982 to December 2020)
+train_data <- data[data$Year_Q >= "1982_Dec" & data$Year_Q <= "2020_Dec", ]
 
-# Assuming you've already loaded and preprocessed your data as in the previous code
-# Perform a train-test split
-train_indices <- createDataPartition(data$Y, p = 0.8, list = FALSE)
-train_data <- data[train_indices, ]
-test_data <- data[-train_indices, ]
+# Filter data for testing (June 2020 to June 2023)
+test_data <- data[data$Year_Q >= "2020_Jun" & data$Year_Q <= "2023_Jun", ]
 
 # Define your target variable for training and testing
 target_variable_train <- train_data$Y
