@@ -1,0 +1,110 @@
+# Load necessary R packages
+library(ggplot2)
+library(dplyr)
+library(summarytools)
+library(rpart)
+library(caret)
+library(e1071)  # For confusionMatrix
+
+
+data <- read.csv("C:/Users/kalpe/Desktop/Genilytics_Solution-ML_intern/9. Breast Cancer Analysis/breast_cancer.csv")
+
+str(data)
+
+head(data)
+
+# Provide a summary of the dataset
+summary(data)
+
+# Check for missing values in the dataset
+missing_data <- data %>%
+  summarise_all(~sum(is.na(.)))
+
+missing_data
+
+##########
+
+# Perform data visualizations to identify potential biases or issues
+# For example, you can create a histogram of age
+ggplot(data, aes(x = Age)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black") +
+  labs(title = "Distribution of Age",
+       x = "Age",
+       y = "Count")
+
+##########
+
+# Create a bar plot for the 'Race' variable
+barplot(table(data$Race), main="Race Distribution", xlab="Race", ylab="Count")
+
+##########
+
+# Create a box plot to visualize the distribution of 'Tumor.Size' by 'Status'
+boxplot(Tumor.Size ~ Status, data=data, main="Tumor Size by Status", xlab="Status", ylab="Tumor Size")
+
+##########
+
+library(survival)
+# Create a survival object
+surv_object <- Surv(time = data$Survival.Months, event = ifelse(data$Status == "Alive", 0, 1))
+# Fit Kaplan-Meier survival curve
+fit <- survfit(surv_object ~ 1)
+# Plot the Kaplan-Meier curve
+plot(fit, main="Kaplan-Meier Survival Curve", xlab="Time (Months)", ylab="Survival Probability")
+
+##########
+
+
+
+# Calculate the correlation matrix for numeric variables
+correlation_matrix <- cor(data[, c("Age", "Tumor.Size", "Survival.Months")])
+
+# Convert the correlation matrix to a data frame
+correlation_df <- as.data.frame(as.table(correlation_matrix))
+
+# Create a heatmap of the correlation matrix with correlation values
+heatmap_plot <- ggplot(data = correlation_df, aes(Var1, Var2, fill = Freq)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) +
+  theme_minimal() +
+  labs(title = "Correlation Heatmap", x = "Variables", y = "Variables") +
+  geom_text(aes(label = round(Freq, 2), color = Freq), vjust = 1)
+
+heatmap_plot
+
+
+##########
+
+
+# Split the data into training and testing sets
+set.seed(123)  # Set a random seed for reproducibility
+train_index <- createDataPartition(data$Status, p = 0.8, list = FALSE)
+training_data <- data[train_index, ]
+testing_data <- data[-train_index, ]
+
+# Create a decision tree model using the training data
+dt_model <- rpart(Status ~ Age + Race + Marital.Status + T.Stage + N.Stage +
+                  X6th.Stage + differentiate + Grade + A.Stage + Tumor.Size +
+                  Estrogen.Status + Progesterone.Status + Regional.Node.Examined +
+                  Reginol.Node.Positive + Survival.Months, data = training_data)
+
+dt_model
+# Make predictions on both training and testing datasets
+train_predictions <- predict(dt_model, newdata = training_data, type = "class")
+test_predictions <- predict(dt_model, newdata = testing_data, type = "class")
+
+# Calculate training accuracy
+train_accuracy <- mean(train_predictions == training_data$Status)
+
+# Calculate testing accuracy
+test_accuracy <- mean(test_predictions == testing_data$Status)
+
+# Print training and testing accuracies
+cat("Training Accuracy:", train_accuracy, "\n")
+cat("Testing Accuracy:", test_accuracy, "\n")
+
+
+
+
+
+
