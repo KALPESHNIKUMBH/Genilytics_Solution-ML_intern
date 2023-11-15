@@ -7,7 +7,7 @@ library(caret)
 library(e1071)  # For confusionMatrix
 
 
-data <- read.csv("/breast_cancer.csv")
+data <- read.csv("//breast_cancer.csv")
 
 str(data)
 
